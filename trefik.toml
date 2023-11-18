@@ -1,0 +1,14 @@
+defaultEntryPoints = ["http"]
+logLevel = "DEBUG"
+
+[docker]
+  exposedByDefault = false
+  watch = true
+  swarmMode = true
+
+[api]
+  dashboard = true
+
+[entryPoints]
+  [entryPoints.http]
+  address = ":80"

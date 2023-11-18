@@ -1,0 +1,21 @@
+version: '3.5'
+
+services:
+  reverse-proxy:
+    image: traefik:v1.7.12
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8080:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./traefik.toml:/traefik.toml
+
+  whoami:
+#    image: containous/whoami
+    image: traefik/whoami:v1.7.1
+    deploy:
+      replicas: 4
+      labels:
+        - "traefik.enable=true"
+        - "traefik.frontend.rule=Host:whoami.docker.localhost"
