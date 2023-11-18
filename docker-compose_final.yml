@@ -4,12 +4,18 @@ services:
   traefik:
     image: "traefik:v2.1.4"
     command:
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.swarmmode=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--providers.docker.endpoint=unix:///var/run/docker.sock"
+      - "--entrypoints.web.address=:80"
       - --log.level=INFO
-      - --entrypoints.web.address=:80
-      - --entrypoints.websecure.address=:443
-      - --providers.docker
-      - --providers.docker.exposedbydefault=false
-      - --providers.docker.swarmmode=true
+#      - --entrypoints.web.address=:80
+#      - --entrypoints.websecure.address=:443
+#      - --providers.docker
+#      - --providers.docker.exposedbydefault=false
+#      - --providers.docker.swarmmode=true
       - --providers.docker.network=traefik-public
       - --api
       - --api.dashboard=true
@@ -27,7 +33,7 @@ services:
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
       # Make sure the volume folder is created
-      - "/mnt/data/traefik/acme.json:/le/acme.json"
+#      - "/mnt/data/traefik/acme.json:/le/acme.json"
     deploy:
       labels:
         # Dashboard
