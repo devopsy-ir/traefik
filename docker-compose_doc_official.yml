@@ -1,0 +1,70 @@
+version: "3.9"
+
+services:
+  traefik:
+    image: traefik:v2.6
+    deploy:
+      placement:
+        constraints:
+          - node.role == manager
+    ports:
+      - 80:80
+      - 8080:8080
+#    name: traefik
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    labels:
+#      - traefik.enable=true
+#      - traefik.http.routers.sample.rule=Host(`example.ir`)
+#      - traefik.http.routers.sample.service=api@internal
+#      - traefik.http.routers.sample.entrypoints=http
+
+#      - "traefik.http.routers.sample.tls.domains[0].main=example.org"
+#      - "traefik.http.routers.sample.entrypoints=web"
+      - "traefik.http.services.sample.loadbalancer.server.port=80"
+      - traefik.port=80
+    command:
+      - --providers.docker=true
+      # Default docker network to use for connections to all containers
+      - --providers.docker.network=traefik-net
+      # Logging levels are DEBUG, PANIC, FATAL, ERROR, WARN, and INFO.
+      #- --log.level=info
+
+      - --providers.docker.swarmmode=true
+#      --docker
+#      --docker.swarmmode
+#      --docker.domain=traefik
+#      --docker.watch
+#      --web
+    networks:
+      - traefik-net
+
+  whoami:
+    image: traefik/whoami:v1.7.1
+    labels:
+      # Explicitly instruct Traefik to expose this service
+      - traefik.enable=true
+      # Router configuration
+      ## Listen to the `web` entrypoint
+#      - traefik.http.routers.whoami_route.entrypoints=http
+      ## Rule based on the Host of the request
+#      - traefik.http.routers.whoami_route.rule=Host(`whoami.example.ir`)
+#      - traefik.http.routers.whoami_route.service=whoami_service
+      # Service configuration
+      ## 80 is the port that the whoami container is listening to
+      - traefik.http.services.whoami_service.loadbalancer.server.port=80
+      - traefik.port=80
+    networks:
+      - traefik-net
+
+networks:
+  traefik-net:
+    external: true
+    
+
+# --name traefik    
+# --constraint=node.role==manager    
+# --publish 80:80 --publish 8080:8080    
+# --mount type=bind,source=/var/run/docker.sock,target=/var/run/docker.sock    
+# --network traefik-net  
+#   traefik:v2.6     --docker     --docker.swarmmode     --docker.domain=traefik     --docker.watch     --web
