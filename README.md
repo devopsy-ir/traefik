@@ -1,8 +1,10 @@
 ```bash
 
-docker stack deploy -c docker-compose_final.yml traefik
+docker stack deploy -c docker-compose.yml traefik
 
 ```
+
+Browse `traefik.example.ir` or `whoami.example.ir`
 
 Admin user and password:
 
